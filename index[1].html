@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GamePix AI — Gaming & Photo Edit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#home"><span>⚡</span> GamePix AI</a>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#games">Games</a>
+      <a href="#editor">Photo Edit</a>
+    </nav>
+    <button class="menu" id="menuBtn">☰</button>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div>
+        <p class="eyebrow">FREE • GAMING • PHOTO EDIT</p>
+        <h1>Play. Edit. Create.<br><span>All in one place.</span></h1>
+        <p class="lead">Free browser games और आसान photo editing tools — बिना software install किए।</p>
+        <div class="actions">
+          <a class="btn primary" href="#games">🎮 Play Games</a>
+          <a class="btn secondary" href="#editor">🖼️ Edit Photo</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="orb">🎮</div>
+        <h3>Free Game Hub</h3>
+        <p>Mini games directly in your browser.</p>
+      </div>
+    </section>
+
+    <section id="games" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">GAME ZONE</p>
+          <h2>Free Games</h2>
+        </div>
+        <input id="gameSearch" class="search" placeholder="Search games...">
+      </div>
+
+      <div class="game-grid" id="gameGrid">
+        <article class="game-card" data-name="2048">
+          <div class="game-icon">🔢</div><h3>2048</h3><p>Number puzzle</p>
+          <button class="play-btn" onclick="openGame('2048')">Play</button>
+        </article>
+        <article class="game-card" data-name="snake">
+          <div class="game-icon">🐍</div><h3>Snake</h3><p>Classic arcade</p>
+          <button class="play-btn" onclick="openGame('snake')">Play</button>
+        </article>
+        <article class="game-card" data-name="click speed">
+          <div class="game-icon">⚡</div><h3>Click Speed</h3><p>Test your speed</p>
+          <button class="play-btn" onclick="openGame('click')">Play</button>
+        </article>
+        <article class="game-card" data-name="memory">
+          <div class="game-icon">🧠</div><h3>Memory</h3><p>Match the cards</p>
+          <button class="play-btn" onclick="openGame('memory')">Play</button>
+        </article>
+      </div>
+      <p id="noGames" class="empty" hidden>No game found.</p>
+    </section>
+
+    <section id="editor" class="section editor-section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">CREATOR STUDIO</p>
+          <h2>Photo Editor</h2>
+        </div>
+        <label class="upload-btn">📤 Upload Photo <input id="upload" type="file" accept="image/*" hidden></label>
+      </div>
+
+      <div class="editor">
+        <div class="canvas-wrap">
+          <canvas id="canvas" width="900" height="600"></canvas>
+          <div id="canvasHint">Upload a photo to start</div>
+        </div>
+        <div class="controls">
+          <label>Brightness <input id="brightness" type="range" min="50" max="150" value="100"></label>
+          <label>Contrast <input id="contrast" type="range" min="50" max="150" value="100"></label>
+          <label>Saturation <input id="saturation" type="range" min="0" max="200" value="100"></label>
+          <label>Blur <input id="blur" type="range" min="0" max="8" value="0"></label>
+          <div class="control-buttons">
+            <button class="tool-btn" id="grayscale">B&W</button>
+            <button class="tool-btn" id="reset">Reset</button>
+            <button class="tool-btn" id="download">Download</button>
+          </div>
+        </div>
+      </div>
+      <p class="note">Tip: यह पहला browser-only version है। Photo आपकी device पर process होती है; किसी server पर upload नहीं होती।</p>
+    </section>
+  </main>
+
+  <footer>
+    <strong>GamePix AI</strong> — Free Gaming & Photo Tools
+  </footer>
+
+  <div class="modal" id="gameModal" aria-hidden="true">
+    <div class="modal-box">
+      <button class="close" onclick="closeGame()">✕</button>
+      <h2 id="modalTitle">Game</h2>
+      <div id="gameArea"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
