@@ -645,7 +645,15 @@ function tttGame() {
 
           if (empty.length) {
             const cpu = empty[Math.floor(Math.random()*empty.length)];
-            board[cpu] = 'O';
+          ;
+    });
+  }
+
+  render();
+}
+
+/* ================= PHOTO FILTERS ================= */
+  board[cpu] = 'O';
           }
 
           w = winner();
@@ -659,206 +667,195 @@ function tttGame() {
         }
       };
 
-      grid.appendChild(b);
-    });
-  }
-
-  render();
-}
-
-/* ================= PHOTO FILTERS ================= */
-
-const FILTERS = [
-  ['Original','none'],
-  ['Vivid','saturate(1.45) contrast(1.08)'],
-  ['Bright','brightness(1.18)'],
-  ['Soft','brightness(1.06) saturate(.9)'],
-  ['Warm','sepia(.12) saturate(1.15)'],
-  ['Cool','hue-rotate(12deg) saturate(.95)'],
-  ['Golden','sepia(.2) saturate(1.3)'],
-  ['Cinema','contrast(1.18) saturate(1.1)'],
-  ['Noir','grayscale(1) contrast(1.25)'],
-  ['B&W Soft','grayscale(1) contrast(.92)'],
-  ['B&W Deep','grayscale(1) contrast(1.45)'],
-  ['Vintage','sepia(.35) contrast(.95)'],
-  ['Retro','sepia(.2) saturate(1.35) contrast(1.05)'],
-  ['Faded','contrast(.85) brightness(1.08) saturate(.8)'],
-  ['Matte','contrast(.88) saturate(.82)'],
-  ['Crisp','contrast(1.25) saturate(1.12)'],
-  ['Punch','contrast(1.3) saturate(1.3)'],
-  ['Pastel','saturate(.7) brightness(1.12)'],
-  ['Rose','sepia(.08) hue-rotate(325deg) saturate(1.15)'],
-  ['Lavender','hue-rotate(285deg) saturate(.9)'],
-  ['Aqua','hue-rotate(155deg) saturate(1.15)'],
-  ['Teal','hue-rotate(145deg) saturate(1.2)'],
-  ['Forest','hue-rotate(75deg) saturate(1.1)'],
-  ['Sunset','sepia(.16) hue-rotate(340deg) saturate(1.3)'],
-  ['Dusk','brightness(.88) saturate(.9)'],
-  ['Night','brightness(.7) contrast(1.1) saturate(.85)'],
-  ['Cloudy','brightness(1.03) contrast(.9) saturate(.75)'],
-  ['Clean','contrast(1.08) saturate(.95)'],
-  ['Clear','contrast(1.16) brightness(1.04)'],
-  ['Glow','brightness(1.13) saturate(1.08)'],
-  ['Dream','brightness(1.08) saturate(.8) contrast(.92)'],
-  ['Lofi','contrast(1.08) saturate(.72) sepia(.08)'],
-  ['Urban','contrast(1.2) saturate(.9)'],
-  ['Street','contrast(1.28) saturate(1.05)'],
-  ['Travel','saturate(1.22) contrast(1.04)'],
-  ['Food','saturate(1.4) contrast(1.08)'],
-  ['Natural','saturate(.95) contrast(1.02)'],
-  ['Neutral','saturate(.9)'],
-  ['Light','brightness(1.25)'],
-  ['Dark','brightness(.78)'],
-  ['High Contrast','contrast(1.45)'],
-  ['Low Contrast','contrast(.72)'],
-  ['Deep Color','saturate(1.5) contrast(1.1)'],
-  ['Muted Color','saturate(.58)'],
-  ['Sepia Light','sepia(.3) brightness(1.04)'],
-  ['Sepia Strong','sepia(.7)'],
-  ['Blue Hour','hue-rotate(205deg) saturate(.85) brightness(.9)'],
-  ['Mint','hue-rotate(105deg) saturate(.8) brightness(1.06)'],
-  ['Coral','hue-rotate(335deg) saturate(1.25)'],
-  ['Indie','contrast(1.12) saturate(.85) sepia(.1)'],
-  ['Film','contrast(1.14) saturate(.9) sepia(.12)'],
-  ['Polaroid','brightness(1.1) contrast(.92) saturate(.92)'],
-  ['Chrome','grayscale(.25) contrast(1.25) saturate(.85)'],
-  ['Arctic','hue-rotate(190deg) saturate(.75) brightness(1.08)'],
-  ['Ember','sepia(.18) hue-rotate(345deg) saturate(1.35)'],
-  ['Cocoa','sepia(.38) saturate(.85) contrast(1.05)'],
-  ['Mellow','brightness(1.04) contrast(.9) saturate(.8)'],
-  ['Sharp Mono','grayscale(1) contrast(1.55)'],
-  ['Silver','grayscale(.65) contrast(1.12)'],
-  ['Fresh','saturate(1.18) brightness(1.06)'],
-  ['Moody','brightness(.86) contrast(1.16) saturate(.82)'],
-  ['Luminous','brightness(1.2) contrast(1.08) saturate(1.05)']
+      grid.appendChild(b)
+const FILTERS=[
+['Original','none'],
+['Vivid','saturate(1.45) contrast(1.08)'],
+['Bright','brightness(1.18)'],
+['Soft','brightness(1.06) saturate(.9)'],
+['Warm','sepia(.12) saturate(1.15)'],
+['Cool','hue-rotate(12deg) saturate(.95)'],
+['Golden','sepia(.2) saturate(1.3)'],
+['Cinema','contrast(1.18) saturate(1.1)'],
+['Noir','grayscale(1) contrast(1.25)'],
+['B&W Soft','grayscale(1) contrast(.92)'],
+['B&W Deep','grayscale(1) contrast(1.45)'],
+['Vintage','sepia(.35) contrast(.95)'],
+['Retro','sepia(.2) saturate(1.35) contrast(1.05)'],
+['Faded','contrast(.85) brightness(1.08) saturate(.8)'],
+['Matte','contrast(.88) saturate(.82)'],
+['Crisp','contrast(1.25) saturate(1.12)'],
+['Punch','contrast(1.3) saturate(1.3)'],
+['Pastel','saturate(.7) brightness(1.12)'],
+['Rose','sepia(.08) hue-rotate(325deg) saturate(1.15)'],
+['Lavender','hue-rotate(285deg) saturate(.9)'],
+['Aqua','hue-rotate(155deg) saturate(1.15)'],
+['Teal','hue-rotate(145deg) saturate(1.2)'],
+['Forest','hue-rotate(75deg) saturate(1.1)'],
+['Sunset','sepia(.16) hue-rotate(340deg) saturate(1.3)'],
+['Dusk','brightness(.88) saturate(.9)'],
+['Night','brightness(.7) contrast(1.1) saturate(.85)'],
+['Cloudy','brightness(1.03) contrast(.9) saturate(.75)'],
+['Clean','contrast(1.08) saturate(.95)'],
+['Clear','contrast(1.16) brightness(1.04)'],
+['Glow','brightness(1.13) saturate(1.08)'],
+['Dream','brightness(1.08) saturate(.8) contrast(.92)'],
+['Lofi','contrast(1.08) saturate(.72) sepia(.08)'],
+['Urban','contrast(1.2) saturate(.9)'],
+['Street','contrast(1.28) saturate(1.05)'],
+['Travel','saturate(1.22) contrast(1.04)'],
+['Food','saturate(1.4) contrast(1.08)'],
+['Natural','saturate(.95) contrast(1.02)'],
+['Neutral','saturate(.9)'],
+['Light','brightness(1.25)'],
+['Dark','brightness(.78)'],
+['High Contrast','contrast(1.45)'],
+['Low Contrast','contrast(.72)'],
+['Deep Color','saturate(1.5) contrast(1.1)'],
+['Muted Color','saturate(.58)'],
+['Sepia Light','sepia(.3) brightness(1.04)'],
+['Sepia Strong','sepia(.7)'],
+['Blue Hour','hue-rotate(205deg) saturate(.85) brightness(.9)'],
+['Mint','hue-rotate(105deg) saturate(.8) brightness(1.06)'],
+['Coral','hue-rotate(335deg) saturate(1.25)'],
+['Indie','contrast(1.12) saturate(.85) sepia(.1)'],
+['Film','contrast(1.14) saturate(.9) sepia(.12)'],
+['Polaroid','brightness(1.1) contrast(.92) saturate(.92)'],
+['Chrome','grayscale(.25) contrast(1.25) saturate(.85)'],
+['Arctic','hue-rotate(190deg) saturate(.75) brightness(1.08)'],
+['Ember','sepia(.18) hue-rotate(345deg) saturate(1.35)'],
+['Cocoa','sepia(.38) saturate(.85) contrast(1.05)'],
+['Mellow','brightness(1.04) contrast(.9) saturate(.8)'],
+['Sharp Mono','grayscale(1) contrast(1.55)'],
+['Silver','grayscale(.65) contrast(1.12)'],
+['Fresh','saturate(1.18) brightness(1.06)'],
+['Moody','brightness(.86) contrast(1.16) saturate(.82)'],
+['Luminous','brightness(1.2) contrast(1.08) saturate(1.05)']
 ];
 
-const photo = document.getElementById('photo');
-const preview = document.getElementById('preview');
-const controls = document.getElementById('editControls');
-const filterGrid = document.getElementById('filterGrid');
+const photo=document.getElementById('photo');
+const preview=document.getElementById('preview');
+const controls=document.getElementById('editControls');
+const fg=document.getElementById('filterGrid');
 
-let currentFilter = 'none';
-let originalPhotoURL = '';
+let current='none';
+let photoURL='';
 
-function createFilterButtons() {
-  filterGrid.innerHTML = '';
+function makeFilters(){
+  fg.innerHTML='';
 
-  FILTERS.forEach(([name, fx]) => {
-    const button = document.createElement('button');
+  FILTERS.forEach(([name,fx])=>{
+    const button=document.createElement('button');
+    button.className='filter'+(name==='Original'?' active':'');
+    
+    const img=document.createElement('img');
+    img.className='filter-preview';
+    img.alt=name;
 
-    button.className = 'filter' + (name === 'Original' ? ' active' : '');
+    const label=document.createElement('span');
+    label.className='filter-name';
+    label.textContent=name;
 
-    button.innerHTML = `
-      <img class="filter-preview" src="" alt="${name}">
-      <span class="filter-name">${name}</span>
-    `;
+    button.appendChild(img);
+    button.appendChild(label);
 
-    button.onclick = () => {
-      currentFilter = fx;
+    button.onclick=()=>{
+      current=fx;
 
-      document.querySelectorAll('.filter').forEach(x =>
-        x.classList.remove('active')
-      );
+      document.querySelectorAll('.filter').forEach(x=>{
+        x.classList.remove('active');
+      });
 
       button.classList.add('active');
 
       applyPhoto();
     };
 
-    filterGrid.appendChild(button);
+    fg.appendChild(button);
   });
 }
 
-createFilterButtons();
+makeFilters();
 
-photo.onchange = e => {
-  const file = e.target.files[0];
+photo.onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
 
-  if (!file) return;
+  photoURL=URL.createObjectURL(file);
 
-  originalPhotoURL = URL.createObjectURL(file);
-
-  preview.src = originalPhotoURL;
-  preview.style.display = 'block';
-
+  preview.src=photoURL;
+  preview.style.display='block';
   controls.classList.remove('hide');
 
-  document.querySelectorAll('.filter-preview').forEach((img, i) => {
-    img.src = originalPhotoURL;
-    img.style.filter = FILTERS[i][1];
+  document.querySelectorAll('.filter-preview').forEach((img,i)=>{
+    img.src=photoURL;
+    img.style.filter=FILTERS[i][1];
   });
 
-  currentFilter = 'none';
+  current='none';
 
-  document.querySelectorAll('.filter').forEach(x =>
-    x.classList.remove('active')
-  );
+  document.querySelectorAll('.filter').forEach(x=>{
+    x.classList.remove('active');
+  });
 
   document.querySelector('.filter').classList.add('active');
 
   applyPhoto();
 };
 
-function applyPhoto() {
-  if (!preview.src) return;
+function applyPhoto(){
+  if(!preview.src)return;
 
-  const brightness = document.getElementById('brightness').value;
-  const contrast = document.getElementById('contrast').value;
-  const saturation = document.getElementById('saturation').value;
+  const b=document.getElementById('brightness').value;
+  const c=document.getElementById('contrast').value;
+  const s=document.getElementById('saturation').value;
 
-  preview.style.filter =
-    `${currentFilter} brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+  preview.style.filter=
+    `${current} brightness(${b}%) contrast(${c}%) saturate(${s}%)`;
 }
 
-['brightness','contrast','saturation'].forEach(id => {
-  document.getElementById(id).oninput = applyPhoto;
+['brightness','contrast','saturation'].forEach(id=>{
+  document.getElementById(id).oninput=applyPhoto;
 });
 
-document.getElementById('resetPhoto').onclick = () => {
-  currentFilter = 'none';
+document.getElementById('resetPhoto').onclick=()=>{
+  current='none';
 
-  document.getElementById('brightness').value = 100;
-  document.getElementById('contrast').value = 100;
-  document.getElementById('saturation').value = 100;
+  document.getElementById('brightness').value=100;
+  document.getElementById('contrast').value=100;
+  document.getElementById('saturation').value=100;
 
-  document.querySelectorAll('.filter').forEach(x =>
-    x.classList.remove('active')
-  );
+  document.querySelectorAll('.filter').forEach(x=>{
+    x.classList.remove('active');
+  });
 
   document.querySelector('.filter').classList.add('active');
 
   applyPhoto();
 };
 
-document.getElementById('downloadPhoto').onclick = () => {
-  if (!preview.src) return;
+document.getElementById('downloadPhoto').onclick=()=>{
+  if(!photo.files[0])return;
 
-  const img = new Image();
+  const img=new Image();
 
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
 
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
+    canvas.width=img.naturalWidth;
+    canvas.height=img.naturalHeight;
 
-    const brightness = document.getElementById('brightness').value;
-    const contrast = document.getElementById('contrast').value;
-    const saturation = document.getElementById('saturation').value;
+    ctx.filter=
+      `${current} brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%)`;
 
-    ctx.filter =
-      `${currentFilter} brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+    ctx.drawImage(img,0,0);
 
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-    const link = document.createElement('a');
-    link.download = 'GamePix-AI-Photo.jpg';
-    link.href = canvas.toDataURL('image/jpeg',0.95);
-    link.click();
+    const a=document.createElement('a');
+    a.download='gamepix-ai-edited.jpg';
+    a.href=canvas.toDataURL('image/jpeg',.92);
+    a.click();
   };
 
-  img.src = originalPhotoURL;
+  img.src=photoURL;
 };
-
-renderGames();
