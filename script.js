@@ -1,105 +1,32 @@
-const $=id=>document.getElementById(id);
 
-const upload=$("upload"), canvas=$("canvas"), ctx=canvas.getContext("2d");
-let img=new Image(), imageLoaded=false, bw=false;
-upload.addEventListener("change",e=>{
-  const file=e.target.files[0]; if(!file)return;
-  const url=URL.createObjectURL(file);
-  img.onload=()=>{imageLoaded=true;canvas.classList.add("has-image");$("canvasHint").style.display="none";URL.revokeObjectURL(url);draw()};
-  img.src=url;
-});
-["brightness","contrast","saturation","blur"].forEach(id=>$(id).addEventListener("input",draw));
-$("grayscale").onclick=()=>{bw=!bw;draw()};
-$("reset").onclick=()=>{["brightness","contrast","saturation","blur"].forEach((id,i)=>$(id).value=[100,100,100,0][i]);bw=false;draw()};
-$("download").onclick=()=>{
-  if(!imageLoaded){alert("पहले photo upload करें.");return}
-  const a=document.createElement("a");a.download="gamepix-edited-photo.png";a.href=canvas.toDataURL("image/png");a.click();
-};
-function draw(){
-  if(!imageLoaded)return;
-  const maxW=1200,maxH=750,scale=Math.min(maxW/img.width,maxH/img.height,1);
-  canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
-  ctx.filter=`brightness(${$("brightness").value}%) contrast(${$("contrast").value}%) saturate(${$("saturation").value}%) blur(${$("blur").value}px) grayscale(${bw?100:0}%)`;
-  ctx.drawImage(img,0,0,canvas.width,canvas.height);ctx.filter="none";
-}
-
-$("gameSearch").addEventListener("input",e=>{
-  const q=e.target.value.toLowerCase();
-  let count=0;
-  document.querySelectorAll(".game-card").forEach(c=>{
-    const ok=c.dataset.name.includes(q);c.style.display=ok?"block":"none";if(ok)count++;
-  });
-  $("noGames").hidden=count!==0;
-});
-
-const modal=$("gameModal"),area=$("gameArea"),title=$("modalTitle");
-function openGame(type){
-  modal.classList.add("show");modal.setAttribute("aria-hidden","false");
-  if(type==="click") clickGame();
-  if(type==="memory") memoryGame();
-  if(type==="snake") snakeGame();
-  if(type==="2048") game2048();
-}
-function closeGame(){modal.classList.remove("show");modal.setAttribute("aria-hidden","true");area.innerHTML=""}
-window.closeGame=closeGame;window.openGame=openGame;
-
-function clickGame(){
-  title.textContent="⚡ Click Speed";
-  area.innerHTML=`<div class="mini-game"><p>5 seconds में जितने clicks कर सकते हो करो!</p><div class="big-number" id="clickCount">0</div><button class="game-btn" id="clickBtn">START</button><p id="clickMsg"></p></div>`;
-  let n=0,running=false,t;
-  $("clickBtn").onclick=()=>{
-    if(!running){n=0;running=true;$("clickBtn").textContent="CLICK!";$("clickMsg").textContent="";t=setTimeout(()=>{running=false;$("clickBtn").textContent="PLAY AGAIN";$("clickMsg").textContent=`Your score: ${n} clicks 🎉`},5000);return}
-    n++;$("clickCount").textContent=n;
-  };
-}
-function memoryGame(){
-  title.textContent="🧠 Memory";
-  const vals=["🍎","🍌","🍇","🍉","🍎","🍌","🍇","🍉"];
-  vals.sort(()=>Math.random()-.5);
-  area.innerHTML=`<div class="mini-game"><p>Matching pairs खोजो</p><div class="memory-grid">${vals.map((v,i)=>`<button class="memory-card" data-v="${v}" data-i="${i}">?</button>`).join("")}</div><p id="memMsg"></p></div>`;
-  let first=null,lock=false,matched=0;
-  document.querySelectorAll(".memory-card").forEach(b=>b.onclick=()=>{
-    if(lock||b.classList.contains("open"))return;b.classList.add("open");b.textContent=b.dataset.v;
-    if(!first){first=b;return}
-    if(first.dataset.v===b.dataset.v){matched+=2;first=null;if(matched===vals.length)$("memMsg").textContent="🎉 You won!"}
-    else{lock=true;setTimeout(()=>{first.classList.remove("open");first.textContent="?";b.classList.remove("open");b.textContent="?";first=null;lock=false},650)}
-  });
-}
-function snakeGame(){
-  title.textContent="🐍 Snake";
-  area.innerHTML=`<div class="mini-game"><canvas class="snake-board" id="snakeCanvas" width="300" height="300"></canvas><p>Arrow keys से snake चलाएँ • Game over पर Enter दबाएँ</p></div>`;
-  const c=$("snakeCanvas"),x=c.getContext("2d"),cell=15;
-  let snake=[{x:10,y:10}],dir={x:1,y:0},food={x:15,y:10},dead=false;
-  document.onkeydown=e=>{
-    if(e.key==="Enter"&&dead){snake=[{x:10,y:10}];dir={x:1,y:0};food={x:15,y:10};dead=false;return}
-    if(e.key==="ArrowUp"&&dir.y===0)dir={x:0,y:-1};if(e.key==="ArrowDown"&&dir.y===0)dir={x:0,y:1};
-    if(e.key==="ArrowLeft"&&dir.x===0)dir={x:-1,y:0};if(e.key==="ArrowRight"&&dir.x===0)dir={x:1,y:0};
-  };
-  const loop=setInterval(()=>{
-    if(dead)return;
-    const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
-    if(head.x<0||head.y<0||head.x>=20||head.y>=20||snake.some(s=>s.x===head.x&&s.y===head.y)){dead=true;return}
-    snake.unshift(head);
-    if(head.x===food.x&&head.y===food.y){food={x:Math.floor(Math.random()*20),y:Math.floor(Math.random()*20)}}else snake.pop();
-    x.fillStyle="#070a11";x.fillRect(0,0,300,300);x.fillStyle="#7c3cff";snake.forEach(s=>x.fillRect(s.x*cell,s.y*cell,cell-1,cell-1));x.fillStyle="#f59e0b";x.fillRect(food.x*cell,food.y*cell,cell-1,cell-1);
-    if(dead){x.fillStyle="#fff";x.font="22px sans-serif";x.fillText("GAME OVER — Enter",65,150)}
-  },110);
-}
-function game2048(){
-  title.textContent="🔢 2048";
-  let board=Array(16).fill(0),score=0;
-  function add(){let e=board.map((v,i)=>v?null:i).filter(v=>v!==null);if(e.length){board[e[Math.floor(Math.random()*e.length)]]=Math.random()<.9?2:4}}
-  add();add();render();
-  function move(dir){
-    let old=board.join(",");
-    const rows=[];
-    for(let r=0;r<4;r++)rows.push(board.slice(r*4,r*4+4));
-    let lines=(dir==="left"||dir==="right")?rows:rows.map((_,c)=>rows.map(r=>r[c]));
-    lines=lines.map(line=>{if(dir==="right"||dir==="down")line.reverse();line=line.filter(Boolean);for(let i=0;i<line.length-1;i++)if(line[i]===line[i+1]){line[i]*=2;score+=line[i];line.splice(i+1,1)}while(line.length<4)line.push(0);if(dir==="right"||dir==="down")line.reverse();return line});
-    if(dir==="left"||dir==="right")board=lines.flat();else board=Array(16).fill(0),lines.forEach((line,c)=>line.forEach((v,r)=>board[r*4+c]=v));
-    if(board.join(",")!==old){add();render()}
-  }
-  function render(){area.innerHTML=`<div class="mini-game"><div class="score">Score: ${score}</div><div class="board2048">${board.map(v=>`<div class="tile n${v}">${v||""}</div>`).join("")}</div><p>Arrow keys से move करें</p></div>`}
-  document.onkeydown=e=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key))move({ArrowLeft:"left",ArrowRight:"right",ArrowUp:"up",ArrowDown:"down"}[e.key])}
-}
-$("menuBtn").onclick=()=>document.querySelector(".topbar nav").classList.toggle("mobile");
+const GAMES=[
+['Click Rush','⚡','click'],['Number Guess','🔢','guess'],['Memory Match','🧠','memory'],['Reaction Test','🚦','reaction'],['Target Tap','🎯','target'],['Quick Math','➗','math'],['Color Match','🎨','color'],['Odd One Out','🔍','odd'],['Rock Paper Scissors','✊','rps'],['Coin Flip','🪙','coin'],['Dice Roll','🎲','dice'],['Higher or Lower','📈','higher'],['Lucky Number','🍀','guess'],['Word Scramble','🔤','scramble'],['Typing Sprint','⌨️','typing'],['Word Counter','📝','counter'],['Quick Spell','✍️','spell'],['Emoji Quiz','😎','emoji'],['Trivia Blast','❓','trivia'],['True or False','✅','tf'],['Flag Quiz','🏳️','flag'],['Capital Quiz','🏙️','capital'],['Animal Quiz','🐯','animal'],['Science Quiz','🔬','science'],['Basketball Shot','🏀','target'],['Penalty Kick','⚽','target'],['Tennis Tap','🎾','reaction'],['Boxing Reflex','🥊','reaction'],['Golf Aim','⛳','target'],['Bowling Strike','🎳','click'],['Fishing Tap','🎣','click'],['Space Dodger','🚀','dodge'],['Meteor Run','☄️','dodge'],['Car Dodge','🚗','dodge'],['Bike Dash','🚴','dodge'],['Road Cross','🛣️','target'],['Treasure Hunt','💎','memory'],['Maze Escape','🌀','maze'],['Safe Cracker','🔐','code'],['Pattern Lock','🔢','sequence'],['Lights Out','💡','lights'],['2048 Mini','🧩','merge'],['Tic Tac Toe','⭕','ttt'],['Connect 4 Mini','🔴','connect'],['Hangman Mini','🎯','hangman'],['Simon Says','🟢','simon'],['Sequence Tap','🔢','sequence'],['Bubble Pop','🫧','click'],['Fruit Slice','🍉','click'],['Ninja Tap','🥷','reaction'],['Fireworks Tap','🎆','click'],['Treasure Clicker','🪙','click'],['Idle Miner','⛏️','click'],['Farm Clicker','🌾','click'],['Rocket Tap','🚀','click']];
+const CATS=['All','Quick','Puzzle','Sports','Arcade','Quiz'];
+const cat=(i)=>i%5===0?'Puzzle':i%5===1?'Quick':i%5===2?'Arcade':i%5===3?'Sports':'Quiz';
+const chips=document.getElementById('chips');let active='All';CATS.forEach(c=>{let b=document.createElement('button');b.className='chip'+(c==='All'?' active':'');b.textContent=c;b.onclick=()=>{active=c;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderGames()};chips.appendChild(b)});
+function renderGames(){let q=document.getElementById('gameSearch').value.toLowerCase();let arr=GAMES.map((g,i)=>({...{g,i},category:cat(i)})).filter(x=>(active==='All'||x.category===active)&&x.g[0].toLowerCase().includes(q));document.getElementById('gameGrid').innerHTML=arr.map(x=>`<div class="card" onclick="openGame(${x.i})"><div class="thumb">${x.g[1]}</div><h3>${x.g[0]}</h3><p>${x.category} • Tap to play</p></div>`).join('')||'<p class="muted">No games found.</p>'}document.getElementById('gameSearch').oninput=renderGames;renderGames();
+const area=document.getElementById('gameArea'),box=document.getElementById('gameBox');let timer=null;
+function openGame(i){clearInterval(timer);let [name,emoji,type]=GAMES[i];document.getElementById('gameTitle').textContent=emoji+' '+name;box.classList.add('show');box.scrollIntoView({behavior:'smooth',block:'center'});game(type)}document.getElementById('closeGame').onclick=()=>{clearInterval(timer);box.classList.remove('show')};
+function game(type){let score=0;area.innerHTML='';const scoreEl=()=>`<div class="score">Score: <span id="s">${score}</span></div>`;
+if(['click'].includes(type)){let left=10;area.innerHTML=`<div style="text-align:center">${scoreEl()}<p>Tap as fast as you can for 10 seconds!</p><button class="playbtn" id="p">TAP!</button><p id="t">10</p></div>`;let p=document.getElementById('p'),t=document.getElementById('t');p.onclick=()=>{if(left>0){score++;document.getElementById('s').textContent=score}};timer=setInterval(()=>{left--;t.textContent=left;if(left<=0){clearInterval(timer);p.disabled=true;p.textContent='Finished'}} ,1000);return}
+if(type==='reaction'){area.innerHTML='<div style="text-align:center"><p>Wait for GO, then tap!</p><button class="playbtn" id="p">WAIT</button><p id="r"></p></div>';let p=document.getElementById('p'),start;let delay=1200+Math.random()*2800;timer=setTimeout(()=>{p.textContent='GO!';start=performance.now()},delay);p.onclick=()=>{if(start){document.getElementById('r').textContent='Reaction: '+Math.round(performance.now()-start)+' ms'}else{document.getElementById('r').textContent='Too early! Reload game.'}};return}
+if(type==='guess'){let n=Math.floor(Math.random()*100)+1;area.innerHTML=`<div style="text-align:center"><p>Guess a number from 1–100</p><input id="in" class="search" type="number"><button class="btn" id="p">Guess</button><p id="r"></p></div>`;document.getElementById('p').onclick=()=>{let v=+document.getElementById('in').value;document.getElementById('r').textContent=v===n?'🎉 Correct!':v<n?'Too low':'Too high'};return}
+if(type==='math'){let a=Math.floor(Math.random()*30)+1,b=Math.floor(Math.random()*30)+1,ans=a+b;area.innerHTML=`<div style="text-align:center"><h2>${a} + ${b} = ?</h2><input id="in" class="search" type="number"><button class="btn" id="p">Check</button><p id="r"></p></div>`;document.getElementById('p').onclick=()=>document.getElementById('r').textContent=(+document.getElementById('in').value===ans)?'✅ Correct!':'❌ Try again';return}
+if(type==='rps'){area.innerHTML='<div style="text-align:center"><p>Choose one</p><button class="btn x">✊</button> <button class="btn x">✋</button> <button class="btn x">✌️</button><p id="r"></p></div>';let choices=['✊','✋','✌️'];document.querySelectorAll('.x').forEach(b=>b.onclick=()=>{let c=choices[Math.floor(Math.random()*3)],u=b.textContent;let win=(u==='✊'&&c==='✌️')||(u==='✋'&&c==='✊')||(u==='✌️'&&c==='✋');document.getElementById('r').textContent='Computer: '+c+' — '+(u===c?'Draw':win?'You win!':'You lose!')});return}
+if(type==='coin'||type==='dice'){area.innerHTML=`<div style="text-align:center"><button class="playbtn" id="p">${type==='coin'?'FLIP':'ROLL'}</button><h2 id="r">—</h2></div>`;document.getElementById('p').onclick=()=>document.getElementById('r').textContent=type==='coin'?(Math.random()<.5?'Heads 🪙':'Tails 🪙'):Math.ceil(Math.random()*6)+' 🎲';return}
+if(type==='color'||type==='odd'){let colors=['red','blue','green','yellow'];let target=colors[Math.floor(Math.random()*4)];area.innerHTML=`<div style="text-align:center"><h3>Tap: ${target}</h3>${colors.map(c=>`<button class="btn x" style="margin:5px">${c}</button>`).join('')}<p id="r"></p></div>`;document.querySelectorAll('.x').forEach(b=>b.onclick=()=>document.getElementById('r').textContent=b.textContent===target?'✅ Correct':'❌ Wrong');return}
+if(type==='memory'){let nums=[1,2,3,4,5,6].sort(()=>Math.random()-.5);area.innerHTML='<div style="text-align:center"><p>Remember this order for 2 seconds:</p><h2 id="m">'+nums.join(' ')+'</h2><input id="in" class="search" placeholder="e.g. 123456"><button class="btn" id="p">Check</button><p id="r"></p></div>';setTimeout(()=>document.getElementById('m').textContent='???',2000);document.getElementById('p').onclick=()=>document.getElementById('r').textContent=document.getElementById('in').value===nums.join('')?'🎉 Perfect!':'❌ Order was '+nums.join('');return}
+if(type==='typing'||type==='spell'||type==='scramble'||type==='counter'){let words=['gamepix','javascript','creator','gaming','photo','mobile'];let w=words[Math.floor(Math.random()*words.length)];let shown=type==='scramble'?w.split('').sort(()=>Math.random()-.5).join(''):w;area.innerHTML=`<div style="text-align:center"><h2>${shown}</h2><input id="in" class="search"><button class="btn" id="p">Check</button><p id="r"></p></div>`;document.getElementById('p').onclick=()=>document.getElementById('r').textContent=(document.getElementById('in').value.toLowerCase()===w)?'✅ Correct!':'❌ Try again';return}
+if(type==='tf'||type==='trivia'||type==='flag'||type==='capital'||type==='animal'||type==='science'||type==='emoji'){let qs=[['The Earth orbits the Sun.','True'],['2 + 2 = 5','False'],['A cat is a mammal.','True'],['Water freezes at 0°C.','True']];let q=qs[Math.floor(Math.random()*qs.length)];area.innerHTML=`<div style="text-align:center"><h3>${q[0]}</h3><button class="btn x">True</button> <button class="btn x">False</button><p id="r"></p></div>`;document.querySelectorAll('.x').forEach(b=>b.onclick=()=>document.getElementById('r').textContent=b.textContent===q[1]?'✅ Correct!':'❌ Wrong');return}
+if(type==='code'||type==='sequence'){let n=[1,2,3,4,5].sort(()=>Math.random()-.5);area.innerHTML=`<div style="text-align:center"><p>Remember: ${n.join('-')}</p><input id="in" class="search"><button class="btn" id="p">Unlock</button><p id="r"></p></div>`;document.getElementById('p').onclick=()=>document.getElementById('r').textContent=document.getElementById('in').value===n.join('')?'🔓 Unlocked!':'🔒 Wrong code';return}
+if(type==='target'||type==='dodge'){area.innerHTML='<div style="text-align:center"><p>Tap the target!</p><button class="playbtn" id="p">🎯</button><p id="r">0</p></div>';let p=document.getElementById('p'),r=document.getElementById('r');p.onclick=()=>{score++;r.textContent=score;p.style.transform=`translate(${Math.random()*120-60}px,${Math.random()*80-40}px)`};return}
+if(type==='ttt'||type==='connect'){area.innerHTML='<div style="text-align:center"><h2>Mini Board</h2><div id="b" style="display:grid;grid-template-columns:repeat(3,70px);gap:6px;justify-content:center"></div><p id="r"></p></div>';let b=document.getElementById('b'),cells=Array(9).fill('');cells.forEach((_,i)=>{let x=document.createElement('button');x.className='playbtn';x.style.minWidth='70px';x.style.minHeight='70px';x.textContent='';x.onclick=()=>{if(!x.textContent){x.textContent=i%2?'⭕':'❌'}};b.appendChild(x)});return}
+if(type==='lights'){area.innerHTML='<div style="text-align:center"><p>Toggle all lights off.</p><div id="b" style="display:grid;grid-template-columns:repeat(3,60px);gap:5px;justify-content:center"></div></div>';for(let i=0;i<9;i++){let x=document.createElement('button');x.className='playbtn';x.style.minWidth='60px';x.style.minHeight='60px';x.textContent='💡';x.onclick=()=>x.textContent=x.textContent?'':'💡';document.getElementById('b').appendChild(x)}return}
+area.innerHTML=`<div style="text-align:center"><h2>${GAMES.find(x=>x[2]===type)?.[1]||'🎮'}</h2><p>This game is ready to play.</p><button class="playbtn" id="p">START</button><p id="r"></p></div>`;document.getElementById('p').onclick=()=>document.getElementById('r').textContent='🎉 Nice! Score: '+(++score);}
+const FILTERS=[
+['Original','none'],['Vivid','saturate(1.45) contrast(1.08)'],['Bright','brightness(1.18)'],['Soft','brightness(1.06) saturate(.9)'],['Warm','sepia(.12) saturate(1.15)'],['Cool','hue-rotate(12deg) saturate(.95)'],['Golden','sepia(.2) saturate(1.3)'],['Cinema','contrast(1.18) saturate(1.1)'],['Noir','grayscale(1) contrast(1.25)'],['B&W Soft','grayscale(1) contrast(.92)'],['B&W Deep','grayscale(1) contrast(1.45)'],['Vintage','sepia(.35) contrast(.95)'],['Retro','sepia(.2) saturate(1.35) contrast(1.05)'],['Faded','contrast(.85) brightness(1.08) saturate(.8)'],['Matte','contrast(.88) saturate(.82)'],['Crisp','contrast(1.25) saturate(1.12)'],['Punch','contrast(1.3) saturate(1.3)'],['Pastel','saturate(.7) brightness(1.12)'],['Rose','sepia(.08) hue-rotate(325deg) saturate(1.15)'],['Lavender','hue-rotate(285deg) saturate(.9)'],['Aqua','hue-rotate(155deg) saturate(1.15)'],['Teal','hue-rotate(145deg) saturate(1.2)'],['Forest','hue-rotate(75deg) saturate(1.1)'],['Sunset','sepia(.16) hue-rotate(340deg) saturate(1.3)'],['Dusk','brightness(.88) saturate(.9)'],['Night','brightness(.7) contrast(1.1) saturate(.85)'],['Cloudy','brightness(1.03) contrast(.9) saturate(.75)'],['Clean','contrast(1.08) saturate(.95)'],['Clear','contrast(1.16) brightness(1.04)'],['Glow','brightness(1.13) saturate(1.08)'],['Dream','brightness(1.08) saturate(.8) contrast(.92)'],['Lofi','contrast(1.08) saturate(.72) sepia(.08)'],['Urban','contrast(1.2) saturate(.9)'],['Street','contrast(1.28) saturate(1.05)'],['Travel','saturate(1.22) contrast(1.04)'],['Food','saturate(1.4) contrast(1.08)'],['Natural','saturate(.95) contrast(1.02)'],['Neutral','saturate(.9)'],['Light','brightness(1.25)'],['Dark','brightness(.78)'],['High Contrast','contrast(1.45)'],['Low Contrast','contrast(.72)'],['Deep Color','saturate(1.5) contrast(1.1)'],['Muted Color','saturate(.58)'],['Sepia Light','sepia(.3) brightness(1.04)'],['Sepia Strong','sepia(.7)'],['Blue Hour','hue-rotate(205deg) saturate(.85) brightness(.9)'],['Mint','hue-rotate(105deg) saturate(.8) brightness(1.06)'],['Coral','hue-rotate(335deg) saturate(1.25)'],['Indie','contrast(1.12) saturate(.85) sepia(.1)'],['Film','contrast(1.14) saturate(.9) sepia(.12)'],['Polaroid','brightness(1.1) contrast(.92) saturate(.92)'],['Chrome','grayscale(.25) contrast(1.25) saturate(.85)'],['Arctic','hue-rotate(190deg) saturate(.75) brightness(1.08)'],['Ember','sepia(.18) hue-rotate(345deg) saturate(1.35)'],['Cocoa','sepia(.38) saturate(.85) contrast(1.05)'],['Mellow','brightness(1.04) contrast(.9) saturate(.8)'],['Sharp Mono','grayscale(1) contrast(1.55)'],['Silver','grayscale(.65) contrast(1.12)'],['Fresh','saturate(1.18) brightness(1.06)'],['Moody','brightness(.86) contrast(1.16) saturate(.82)'],['Luminous','brightness(1.2) contrast(1.08) saturate(1.05)']];
+let current='none';const fg=document.getElementById('filterGrid');FILTERS.forEach(([name,fx])=>{let b=document.createElement('button');b.className='filter'+(name==='Original'?' active':'');b.textContent=name;b.onclick=()=>{current=fx;document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyPhoto()};fg.appendChild(b)});
+const photo=document.getElementById('photo'),preview=document.getElementById('preview'),controls=document.getElementById('editControls');photo.onchange=e=>{let f=e.target.files[0];if(!f)return;preview.src=URL.createObjectURL(f);preview.style.display='block';controls.classList.remove('hide');applyPhoto()};
+function applyPhoto(){preview.style.filter=`${current} brightness(${document.getElementById('brightness').value}%) contrast(${document.getElementById('contrast').value}%) saturate(${document.getElementById('saturation').value}%)`};['brightness','contrast','saturation'].forEach(id=>document.getElementById(id).oninput=applyPhoto);
+document.getElementById('resetPhoto').onclick=()=>{current='none';['brightness','contrast','saturation'].forEach(id=>document.getElementById(id).value=100);document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));document.querySelector('.filter').classList.add('active');applyPhoto()};
+document.getElementById('downloadPhoto').onclick=()=>{if(!photo.files[0])return;let c=document.createElement('canvas'),ctx=c.getContext('2d'),img=new Image();img.onload=()=>{c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.filter=`${current} brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%)`;ctx.drawImage(img,0,0);let a=document.createElement('a');a.download='gamepix-ai-edited.jpg';a.href=c.toDataURL('image/jpeg',.92);a.click()};img.src=preview.src};
