@@ -1,1 +1,335 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b14"><meta name="google-site-verification" content="pyQ_AFYxBoCxgCJJEYOp5n2wmlIdLQZDau1pNbVOBGg"><title>GamePix AI — Photo Editor</title><link rel="stylesheet" href="style.css"></head><body><header><div class="brand">✦ GamePix <b>AI</b></div><div class="title">Photo Editor</div><button id="theme">☾</button></header><main><section class="intro"><div><small>PHOTO EDITOR</small><h1>Make your photos <span>look amazing.</span></h1><p>Professional filters and adjustments, directly in your browser.</p></div><label class="upload">＋ <b>Upload photo</b><small>JPG • PNG • WEBP</small><input id="file" type="file" accept="image/*"></label></section><section class="work"><div class="panel"><div class="head"><b>Preview</b><button id="reset">↺ Reset</button></div><div id="box"><div id="empty">📷<b>Upload a photo to start</b><small>Your photo stays on your device.</small><label>Choose photo<input id="file2" type="file" accept="image/*"></label></div><img id="photo" class="hide" alt="Photo preview"></div><div class="foot"><span id="name">Original</span><button id="download">⬇ Download HD</button></div></div><aside><div class="card"><h3>Adjust <small>LIVE</small></h3><label>Brightness <output id="bv">100</output><input id="br" type="range" min="50" max="150" value="100"></label><label>Contrast <output id="cv">100</output><input id="co" type="range" min="50" max="150" value="100"></label><label>Saturation <output id="sv">100</output><input id="sa" type="range" min="0" max="200" value="100"></label><label>Warmth <output id="wv">0</output><input id="wa" type="range" min="-40" max="40" value="0"></label><label>Blur <output id="lv">0</output><input id="bl" type="range" min="0" max="8" value="0"></label></div><div class="card"><h3>Filters <small>64+ STYLES</small></h3><div id="filters"></div></div></aside></section></main><footer>GamePix AI • Photo Editor</footer><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Search Console verification -->
+  <meta name="google-site-verification"
+        content="pyQ_AFYxBoCxgCJJEYOp5n2wmlIdLQZDau1pNbVOBGg">
+
+  <title>GamePix AI Photo Editor</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <span>✦</span> GamePix <b>AI</b>
+  </div>
+
+  <button id="themeBtn" class="theme-btn">☾</button>
+</header>
+
+
+<main class="editor">
+
+  <!-- TITLE -->
+  <section class="intro">
+    <div class="small-title">PHOTO EDITOR</div>
+    <h1>Make Your Photo <span>Beautiful</span></h1>
+    <p>
+      Choose your photo, select a filter and make simple adjustments.
+    </p>
+  </section>
+
+
+  <!-- STEP NAVIGATION -->
+  <div class="steps">
+
+    <div class="step active">
+      <div class="step-number">1</div>
+      <div>
+        <b>Photo</b>
+        <small>Choose</small>
+      </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div>
+        <b>Filter</b>
+        <small>Style</small>
+      </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div>
+        <b>Adjust</b>
+        <small>Change</small>
+      </div>
+    </div>
+
+    <div class="step-line"></div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div>
+        <b>Save</b>
+        <small>Download</small>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- STEP 1 -->
+  <section class="section photo-section">
+
+    <div class="section-title">
+      <div class="step-label">STEP 1</div>
+      <h2>Choose Your Photo</h2>
+      <p>Select a photo from your gallery.</p>
+    </div>
+
+
+    <!-- BIG GALLERY BUTTON -->
+    <label for="photoInput" class="gallery-button">
+
+      <div class="gallery-icon">
+        📷
+      </div>
+
+      <div class="gallery-text">
+        <strong>Choose Photo From Gallery</strong>
+        <span>JPG • PNG • WEBP</span>
+      </div>
+
+      <div class="choose-arrow">
+        →
+      </div>
+
+    </label>
+
+    <input
+      type="file"
+      id="photoInput"
+      accept="image/*"
+      hidden
+    >
+
+
+    <!-- PHOTO PREVIEW -->
+    <div class="preview-box">
+
+      <div id="emptyPreview" class="empty-preview">
+
+        <div class="empty-icon">🖼️</div>
+
+        <strong>Your photo will appear here</strong>
+
+        <span>
+          Choose a photo from your gallery
+        </span>
+
+      </div>
+
+      <canvas id="photoCanvas"></canvas>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- STEP 2 FILTER -->
+  <section class="section">
+
+    <div class="section-title filter-heading">
+
+      <div>
+        <div class="step-label">STEP 2</div>
+
+        <h2>Choose Filter</h2>
+
+        <p>
+          Swipe left/right and select one filter.
+        </p>
+      </div>
+
+      <span id="filterCount" class="filter-count">
+        0 Filters
+      </span>
+
+    </div>
+
+
+    <!-- FILTERS -->
+    <div id="filterContainer" class="filters">
+
+    </div>
+
+  </section>
+
+
+
+  <!-- STEP 3 ADJUST -->
+  <section class="section">
+
+    <div class="section-title">
+
+      <div class="step-label">STEP 3</div>
+
+      <h2>Adjust Photo</h2>
+
+      <p>
+        Change light, colour and tone.
+      </p>
+
+    </div>
+
+
+    <div class="adjustments">
+
+
+      <!-- BRIGHTNESS -->
+      <div class="adjust-card">
+
+        <div class="adjust-top">
+          <b>☀ Brightness</b>
+          <span id="brightnessValue">0</span>
+        </div>
+
+        <input
+          type="range"
+          id="brightness"
+          min="-100"
+          max="100"
+          value="0"
+        >
+
+      </div>
+
+
+      <!-- CONTRAST -->
+      <div class="adjust-card">
+
+        <div class="adjust-top">
+          <b>◐ Contrast</b>
+          <span id="contrastValue">0</span>
+        </div>
+
+        <input
+          type="range"
+          id="contrast"
+          min="-100"
+          max="100"
+          value="0"
+        >
+
+      </div>
+
+
+      <!-- SATURATION -->
+      <div class="adjust-card">
+
+        <div class="adjust-top">
+          <b>🎨 Saturation</b>
+          <span id="saturationValue">0</span>
+        </div>
+
+        <input
+          type="range"
+          id="saturation"
+          min="-100"
+          max="100"
+          value="0"
+        >
+
+      </div>
+
+
+      <!-- WARMTH -->
+      <div class="adjust-card">
+
+        <div class="adjust-top">
+          <b>🔥 Warmth</b>
+          <span id="warmthValue">0</span>
+        </div>
+
+        <input
+          type="range"
+          id="warmth"
+          min="-100"
+          max="100"
+          value="0"
+        >
+
+      </div>
+
+
+      <!-- BLUR -->
+      <div class="adjust-card">
+
+        <div class="adjust-top">
+          <b>💧 Blur</b>
+          <span id="blurValue">0</span>
+        </div>
+
+        <input
+          type="range"
+          id="blur"
+          min="0"
+          max="8"
+          value="0"
+        >
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- STEP 4 -->
+  <section class="section save-section">
+
+    <div class="section-title">
+
+      <div class="step-label">STEP 4</div>
+
+      <h2>Save Your Photo</h2>
+
+      <p>
+        Download your edited photo in HD quality.
+      </p>
+
+    </div>
+
+
+    <div class="save-buttons">
+
+      <button id="resetButton" class="reset-button">
+        ↺ Reset
+      </button>
+
+      <button id="downloadButton" class="download-button">
+        ↓ Download HD Photo
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+  GamePix AI • Free Online Photo Editor
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
